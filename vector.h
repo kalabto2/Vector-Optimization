@@ -20,27 +20,17 @@ namespace epc
          }
 
          vector(const vector& v) {
-//             t_capacity = 0;
-//             t_data = nullptr;
-//             t_size = 0;
              T *tmp;
              tmp = new T[v.t_capacity];
+
              try {
-                 for (int i = 0; i < v.t_size; i ++) {
+                 for (int i = 0; i < v.t_size; i ++)
                      tmp[i] = v[i];
-                 }
              } catch (...){
                  delete [] tmp;
                  throw;
              }
-//             std::cout << "HERE" << std::endl;
-//             if (t_capacity == 0) {
-//                 delete t_data;
-//             }
-//             else {
-//                 delete [] t_data;
-//             }
-//            delete [] t_data;
+
              t_data = tmp;
              t_capacity = v.t_capacity;
              t_size = v.t_size;
@@ -55,9 +45,8 @@ namespace epc
              t_capacity = v.t_capacity;
              t_data = new T[t_capacity];
              t_size = v.t_size;
-             for (int i = 0; i < v.t_size; i ++) {
+             for (int i = 0; i < v.t_size; i ++)
                  t_data[i] = v[i];
-             }
 
              return *this;
          }
@@ -74,22 +63,13 @@ namespace epc
          }
 
          T& operator[](size_t i) {
-//             std::cout << t_size << " " << t_capacity << std::endl;
-//             std::cout << "[]=" << t_data[i] << std::endl;
              return t_data[i];
          }
          const T& operator[](size_t i) const {
-//             std::cout << t_size << " " << t_capacity << std::endl;
-//             std::cout << "[]=" << t_data[i] << std::endl;
              return t_data[i];
          }
 
          void push_back(const T& t) {
-//             std::cout << "PUSHing to array: [";
-//             for (int i = 0; i < t_size; i ++)
-//                 std::cout << t_data[i] << ", ";
-//             std::cout << "]" << std::endl;
-
              if (t_size == t_capacity) { // reallocate array
                  T* tmp = new T[t_capacity == 0 ? 1 : t_capacity * 2];
                  try {
@@ -105,11 +85,6 @@ namespace epc
              }
              t_data[t_size] = t;
              t_size ++;
-
-//             std::cout << "PUSHED to array: [";
-//             for (int i = 0; i < t_size; i ++)
-//                 std::cout << t_data[i] << ", ";
-//             std::cout << "]" << std::endl;
          }
 
          void swap(vector& other) noexcept {
