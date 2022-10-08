@@ -11,7 +11,7 @@ namespace epc
    private:
        size_t t_capacity; // allocated space
        size_t t_size; // number of elements in allocated space
-       T* t_data;
+       T* t_data; // array
    public:
          vector() noexcept {
              t_capacity = 0;
@@ -19,17 +19,31 @@ namespace epc
              t_size = 0;
          }
 
-         vector(const vector& v) {//: t_capacity(v.t_capacity), t_size(v.t_size){
-             T* tmp = new T[t_capacity];
-             delete [] t_data;
-             t_data = tmp;
-
-             t_capacity = v.t_capacity;
-//                t_data = operator new (t_capacity * sizeof(T));
-             t_size = v.t_size;
-             for (int i = 0; i < v.t_size; i ++) {
-                 t_data[i] = v[i];
+         vector(const vector& v) {
+//             t_capacity = 0;
+//             t_data = nullptr;
+//             t_size = 0;
+             T *tmp;
+             tmp = new T[v.t_capacity];
+             try {
+                 for (int i = 0; i < v.t_size; i ++) {
+                     tmp[i] = v[i];
+                 }
+             } catch (...){
+                 delete [] tmp;
+                 throw;
              }
+//             std::cout << "HERE" << std::endl;
+//             if (t_capacity == 0) {
+//                 delete t_data;
+//             }
+//             else {
+//                 delete [] t_data;
+//             }
+//            delete [] t_data;
+             t_data = tmp;
+             t_capacity = v.t_capacity;
+             t_size = v.t_size;
          }
 
          vector& operator=(const vector& v) {
@@ -60,28 +74,56 @@ namespace epc
          }
 
          T& operator[](size_t i) {
+//             std::cout << t_size << " " << t_capacity << std::endl;
+//             std::cout << "[]=" << t_data[i] << std::endl;
              return t_data[i];
          }
          const T& operator[](size_t i) const {
+//             std::cout << t_size << " " << t_capacity << std::endl;
+//             std::cout << "[]=" << t_data[i] << std::endl;
              return t_data[i];
          }
 
          void push_back(const T& t) {
-             if (t_size == t_capacity) {
-                 t_capacity = t_capacity == 0 ? 1 : t_capacity * 2;
-                 T* tmp = new T[t_capacity];
-                 for (size_t i = 0; i < t_size; i ++)
-                     tmp[i] = t_data[i];
+//             std::cout << "PUSHing to array: [";
+//             for (int i = 0; i < t_size; i ++)
+//                 std::cout << t_data[i] << ", ";
+//             std::cout << "]" << std::endl;
+
+             if (t_size == t_capacity) { // reallocate array
+                 T* tmp = new T[t_capacity == 0 ? 1 : t_capacity * 2];
+                 try {
+                     for (size_t i = 0; i < t_size; i ++)
+                         tmp[i] = t_data[i];
+                 } catch (...) {
+                     delete [] tmp;
+                     throw;
+                 }
                  delete [] t_data;
                  t_data = tmp;
+                 t_capacity = t_capacity == 0 ? 1 : t_capacity * 2;
              }
-             t_data[t_size ++] = t;
+             t_data[t_size] = t;
+             t_size ++;
+
+//             std::cout << "PUSHED to array: [";
+//             for (int i = 0; i < t_size; i ++)
+//                 std::cout << t_data[i] << ", ";
+//             std::cout << "]" << std::endl;
          }
 
          void swap(vector& other) noexcept {
-            vector tmp = vector(other);
-            other = *this;
-            *this = tmp;
+             T* s_data = t_data;
+             size_t s_size = t_size;
+             size_t s_capacity = t_capacity;
+
+             t_data = other.t_data;
+             t_size = other.t_size;
+             t_capacity = other.t_capacity;
+
+             other.t_data = s_data;
+             other.t_size = s_size;
+             other.t_capacity = s_capacity;
          }
 
          size_t capacity() const {
@@ -94,8 +136,14 @@ namespace epc
          void reserve(size_t s) {
              if (s > t_size) {
                  T * tmp = new T[s];
-                 for (size_t i = 0; i < t_size; i ++)
-                     tmp[i] = t_data[i];
+
+                 try {
+                     for (size_t i = 0; i < t_size; i ++)
+                         tmp[i] = t_data[i];
+                 } catch (...) {
+                     delete [] tmp;
+                     throw;
+                 }
                  delete [] t_data;
                  t_data = tmp;
                  t_capacity = s;

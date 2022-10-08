@@ -15,6 +15,7 @@ BOOST_AUTO_TEST_CASE(copy_constructor_test)
       v.push_back(1);
       v.push_back(2);
       v.push_back(3);
+//       std::cout << "here!!!" << v[0] << " " << v[1] << " " << v[2] << " " << " " << v.size() << " " << v.capacity() << std::endl;
 
       auto temp = v.data();
 
