@@ -37,17 +37,8 @@ namespace epc
          }
 
          vector& operator=(const vector& v) {
-             if (&v == this)
-                 return *this;
-
-             delete [] t_data;
-
-             t_capacity = v.t_capacity;
-             t_data = new T[t_capacity];
-             t_size = v.t_size;
-             for (int i = 0; i < v.t_size; i ++)
-                 t_data[i] = v[i];
-
+             vector tmp(v);
+             swap(tmp);
              return *this;
          }
 
