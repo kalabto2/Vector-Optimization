@@ -88,17 +88,9 @@ namespace epc
          }
 
          void swap(vector& other) noexcept {
-             T* s_data = t_data;
-             size_t s_size = t_size;
-             size_t s_capacity = t_capacity;
-
-             t_data = other.t_data;
-             t_size = other.t_size;
-             t_capacity = other.t_capacity;
-
-             other.t_data = s_data;
-             other.t_size = s_size;
-             other.t_capacity = s_capacity;
+             std::swap(t_data, other.t_data);
+             std::swap(t_size, other.t_size);
+             std::swap(t_capacity, other.t_capacity);
          }
 
          size_t capacity() const {
