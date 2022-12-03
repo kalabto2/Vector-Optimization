@@ -113,30 +113,8 @@ namespace epc
        }
 
        void push_back(const T &t) {
-           if (t_size == t_capacity) { // reallocate array
+           if (t_size == t_capacity) // reallocate array
                reserve((t_capacity == 0 ? 1 : t_capacity * 2));
-//               T *tmp = static_cast<T *>(::operator new[](sizeof(T) * (t_capacity == 0 ? 1 : t_capacity * 2)));
-//               size_t i = 0;
-//
-//               try {
-//                   for ( ; i < t_size; i++ )
-//                       new(tmp + i)T(t_data[i]);
-//               } catch (...) {
-//                   for ( size_t j = 0; j < i; j++ )
-//                       tmp[i].T::~T();
-//
-//                   operator delete[](tmp);
-//                   throw;
-//               }
-//
-//               for ( int j = 0; j < t_size; j++ )
-//                   t_data[j].T::~T();
-//               if (t_size > N)
-//                    operator delete[](t_data);
-//
-//               t_data = tmp;
-//               t_capacity = t_capacity == 0 ? 1 : t_capacity * 2;
-           }
 
            new(t_data + t_size) T(t);
            t_size++;
