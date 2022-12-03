@@ -12,7 +12,7 @@ namespace epc
            size_t t_capacity; // allocated space
            size_t t_size; // number of elements in allocated space
            T *t_data; // array
-           alignas(T) std::byte t_buffer[sizeof(T) * N]; // static buffer
+          std::byte t_buffer[sizeof(T) * N]; // static buffer
 
       public:
        vector() noexcept {
@@ -23,12 +23,16 @@ namespace epc
 
        vector(const vector &v) {
            T *tmp;
+           // use buffer if enough capacity
            if (v.t_capacity <= N)
                tmp = reinterpret_cast<T*>(t_buffer);
-           tmp = static_cast<T *>(::operator new(sizeof(T) * v.t_capacity));
+           else
+               // allocate new memory
+                tmp = static_cast<T *>(::operator new[](sizeof(T) * v.t_capacity));
 
            int i = 0;
            try {
+               // copy elements
                for ( ; i < v.t_size; i++ )
                    new(tmp + i) T(v[i]);
            } catch (...) {
@@ -84,7 +88,7 @@ namespace epc
 
        void reserve(size_t s) {
            if (s > t_size) {
-               T *tmp = static_cast<T *>(::operator new(sizeof(T) * s));
+               T *tmp = static_cast<T *>(::operator new[](sizeof(T) * s));
                size_t i = 0;
 
                try {
@@ -100,8 +104,8 @@ namespace epc
 
                for ( int j = 0; j < t_size; j++ )
                    t_data[j].T::~T();
-
-               operator delete[](t_data);
+               if (t_size > N)
+                    operator delete[](t_data);
 
                t_data = tmp;
                t_capacity = s;
@@ -110,27 +114,28 @@ namespace epc
 
        void push_back(const T &t) {
            if (t_size == t_capacity) { // reallocate array
-               T *tmp = static_cast<T *>(::operator new(sizeof(T) * (t_capacity == 0 ? 1 : t_capacity * 2)));
-               size_t i = 0;
-
-               try {
-                   for ( ; i < t_size; i++ )
-                       new(tmp + i)T(t_data[i]);
-               } catch (...) {
-                   for ( size_t j = 0; j < i; j++ )
-                       tmp[i].T::~T();
-
-                   operator delete[](tmp);
-                   throw;
-               }
-
-               for ( int j = 0; j < t_size; j++ )
-                   t_data[j].T::~T();
-               if (t_size > N)
-                    operator delete[](t_data);
-
-               t_data = tmp;
-               t_capacity = t_capacity == 0 ? 1 : t_capacity * 2;
+               reserve((t_capacity == 0 ? 1 : t_capacity * 2));
+//               T *tmp = static_cast<T *>(::operator new[](sizeof(T) * (t_capacity == 0 ? 1 : t_capacity * 2)));
+//               size_t i = 0;
+//
+//               try {
+//                   for ( ; i < t_size; i++ )
+//                       new(tmp + i)T(t_data[i]);
+//               } catch (...) {
+//                   for ( size_t j = 0; j < i; j++ )
+//                       tmp[i].T::~T();
+//
+//                   operator delete[](tmp);
+//                   throw;
+//               }
+//
+//               for ( int j = 0; j < t_size; j++ )
+//                   t_data[j].T::~T();
+//               if (t_size > N)
+//                    operator delete[](t_data);
+//
+//               t_data = tmp;
+//               t_capacity = t_capacity == 0 ? 1 : t_capacity * 2;
            }
 
            new(t_data + t_size) T(t);
