@@ -145,6 +145,9 @@ namespace epc
                    t_data[j].T::~T();
 
 //               operator delete[](t_data);
+                // free memory only from dynamic allocation
+               if (t_size > N)
+                    operator delete[](t_data);
 
                t_data = tmp;
                t_capacity = s;
