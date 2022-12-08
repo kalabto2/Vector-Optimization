@@ -122,7 +122,7 @@ namespace epc
        }
 
        void reserve(size_t s) {
-           if (s > t_size) {
+           if (s > t_capacity) {
                T *tmp = static_cast<T *>(::operator new[](sizeof(T) * s));
                size_t i = 0;
 
